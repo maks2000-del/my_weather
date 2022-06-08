@@ -2,7 +2,7 @@ import 'dart:io';
 
 class InternetConnection {
   late final bool status;
-  final String apiUrl = "http://api.openweathermap.org/";
+  final String apiUrl = "https://api.openweathermap.org/";
 
   checkForInternetConnection() async {
     try {

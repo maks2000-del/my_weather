@@ -38,6 +38,8 @@ dependencies:
   shared_preferences: ^2.0.11
   get_it: ^7.2.0
   http: ^0.13.4
+  bloc: ^8.0.0
+  flutter_bloc: ^8.0.0
 
 dev_dependencies:
   flutter_test:
