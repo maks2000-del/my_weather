@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 
-class AppWeatherImages {
-  static AssetImage clearSky = const AssetImage('assets/iocns/sun.png');
-  static AssetImage fewClouds = const AssetImage('assets/iocns/cloud_sun.png');
-  static AssetImage scatteredClouds =
-      const AssetImage('assets/iocns/cloud.png');
-  static AssetImage brokenClouds =
-      const AssetImage('assets/iocns/cloud_flash.png');
-  static AssetImage showerRain =
-      const AssetImage('assets/iocns/heavy_rain.png');
-  static AssetImage rain = const AssetImage('assets/iocns/rain.png');
-  static AssetImage thunderstorm = const AssetImage('assets/iocns/flash.png');
-  static AssetImage snow = const AssetImage('assets/iocns/snow.png');
-  static AssetImage mist = const AssetImage('assets/iocns/cloud_snow.png');
-}
+final assetImages = <String, String>{
+  '01': 'assets/icons/sun.png',
+  '02': 'assets/icons/cloud_sun.png',
+  '03': 'assets/icons/cloud.png',
+  '04': 'assets/icons/cloud_flash.png',
+  '09': 'assets/icons/heavy_rain.png',
+  '10': 'assets/icons/rain.png',
+  '11': 'assets/icons/flash.png',
+  '13': 'assets/icons/snow.png',
+  '50': 'assets/icons/cloud_snow.png',
+};

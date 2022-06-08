@@ -13,6 +13,7 @@ class HomeCubit extends Cubit<HomeState> {
           HomeState(
             title: '',
             europeTemperature: true,
+            isDataLoaded: false,
             weather: Weather(
               currentWeather: Info(
                 date: DateTime.now(),
@@ -37,7 +38,7 @@ class HomeCubit extends Cubit<HomeState> {
     );
 
     emit(
-      state.copyWith(location: location, weather: weather),
+      state.copyWith(location: location, weather: weather, isDataLoaded: true),
     );
   }
 
