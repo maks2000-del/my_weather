@@ -32,4 +32,18 @@ class Info {
         temperatyre: json['temp']['day'].toDouble(),
         iconId: json['weather'].first['icon'],
       );
+
+  factory Info.fromLocalJson(Map<String, dynamic> json) => Info(
+        date: json['date'],
+        temperatyre: json['temperatyre'],
+        iconId: json['iconId'],
+      );
+
+  static Map<String, String> toMap(Info info) {
+    return {
+      'date': info.date.toString(),
+      'temperatyre': info.temperatyre.toString(),
+      'iconId': info.iconId,
+    };
+  }
 }
