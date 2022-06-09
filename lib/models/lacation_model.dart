@@ -27,8 +27,17 @@ class Location {
 
   factory Location.fromJson(Map<String, dynamic> json) => Location(
         cityName: json['name'],
-        latitude: json['lat'],
-        longitude: json['lon'],
+        latitude: double.parse(json['lat'].toString()),
+        longitude: double.parse(json['lon'].toString()),
         country: json['country'],
       );
+
+  Map<String, String> toMap(Location location) {
+    return {
+      'name': location.cityName,
+      'lat': location.latitude.toString(),
+      'lon': location.longitude.toString(),
+      'country': location.country,
+    };
+  }
 }

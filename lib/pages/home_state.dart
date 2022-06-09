@@ -5,6 +5,7 @@ class HomeState {
   final String title;
   final bool europeTemperature;
   final bool isDataLoaded;
+  final bool isInformationUpToDate;
   final Location? location;
   final Weather? weather;
 
@@ -12,6 +13,7 @@ class HomeState {
     required this.title,
     required this.europeTemperature,
     required this.isDataLoaded,
+    required this.isInformationUpToDate,
     this.location,
     this.weather,
   });
@@ -20,6 +22,7 @@ class HomeState {
     String? title,
     bool? europeTemperature,
     bool? isDataLoaded,
+    bool? isInformationUpToDate,
     Location? location,
     Weather? weather,
   }) {
@@ -27,6 +30,8 @@ class HomeState {
       title: title ?? this.title,
       europeTemperature: europeTemperature ?? this.europeTemperature,
       isDataLoaded: isDataLoaded ?? this.isDataLoaded,
+      isInformationUpToDate:
+          isInformationUpToDate ?? this.isInformationUpToDate,
       location: location ?? this.location,
       weather: weather ?? this.weather,
     );

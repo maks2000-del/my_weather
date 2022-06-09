@@ -3,8 +3,11 @@ import 'package:my_weather/weather_app.dart';
 
 import 'injector.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  setUp();
-  runApp(const WeatherApp());
+  await setUp();
+
+  runApp(
+    const WeatherApp(),
+  );
 }

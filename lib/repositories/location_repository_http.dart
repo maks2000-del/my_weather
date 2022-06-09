@@ -9,11 +9,11 @@ import '../helpers/internet_connection.dart';
 
 import 'package:http/http.dart' as http;
 
-abstract class LocationPerository {
+abstract class LocationHttpRerository {
   Future<Location?> getCurrentCoordinates(String cityName);
 }
 
-class LocationPerositoryImpl implements LocationPerository {
+class LocationHttpRerositoryImpl implements LocationHttpRerository {
   final _internetConnection = GetIt.instance.get<InternetConnection>();
   final apiKey = "c8e0382199b302c66ba31651d6a15c26";
 

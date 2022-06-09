@@ -53,7 +53,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     Text(
-                      'up to date',
+                      state.title,
                       style: TextStyle(
                         fontSize: 15.0,
                         fontWeight: FontWeight.w300,

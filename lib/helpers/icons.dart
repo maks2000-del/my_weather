@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 final assetImages = <String, String>{
   '01': 'assets/icons/sun.png',
   '02': 'assets/icons/cloud_sun.png',
