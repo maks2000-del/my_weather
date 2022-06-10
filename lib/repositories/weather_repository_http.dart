@@ -6,7 +6,7 @@ import '../helpers/internet_connection.dart';
 
 import 'package:http/http.dart' as http;
 
-import '../models/weather_entity.dart';
+import '../models/weather_model.dart';
 
 abstract class WeatherPerository {
   Future<Weather?> getCurrentWather(double lat, double lon);

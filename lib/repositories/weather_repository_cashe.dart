@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:my_weather/models/info_model.dart';
 import 'package:my_weather/models/lacation_model.dart';
-import 'package:my_weather/models/weather_entity.dart';
+import 'package:my_weather/models/weather_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class WeatherLocalDataSource {

@@ -1,11 +1,12 @@
 import 'package:my_weather/models/lacation_model.dart';
-import 'package:my_weather/models/weather_entity.dart';
+import 'package:my_weather/models/weather_model.dart';
 
 class HomeState {
   final String title;
   final bool europeTemperature;
   final bool isDataLoaded;
   final bool isInformationUpToDate;
+  final double temperatureStep;
   final Location? location;
   final Weather? weather;
 
@@ -14,6 +15,7 @@ class HomeState {
     required this.europeTemperature,
     required this.isDataLoaded,
     required this.isInformationUpToDate,
+    required this.temperatureStep,
     this.location,
     this.weather,
   });
@@ -23,6 +25,7 @@ class HomeState {
     bool? europeTemperature,
     bool? isDataLoaded,
     bool? isInformationUpToDate,
+    double? temperatureStep,
     Location? location,
     Weather? weather,
   }) {
@@ -32,6 +35,7 @@ class HomeState {
       isDataLoaded: isDataLoaded ?? this.isDataLoaded,
       isInformationUpToDate:
           isInformationUpToDate ?? this.isInformationUpToDate,
+      temperatureStep: temperatureStep ?? this.temperatureStep,
       location: location ?? this.location,
       weather: weather ?? this.weather,
     );

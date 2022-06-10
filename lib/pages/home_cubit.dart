@@ -2,7 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_weather/helpers/internet_connection.dart';
 import 'package:my_weather/injector.dart';
 import 'package:my_weather/models/info_model.dart';
-import 'package:my_weather/models/weather_entity.dart';
+import 'package:my_weather/models/weather_model.dart';
 import 'package:my_weather/repositories/location_repository_cashe.dart';
 
 import '../repositories/location_repository_http.dart';
@@ -23,6 +23,7 @@ class HomeCubit extends Cubit<HomeState> {
             europeTemperature: true,
             isDataLoaded: false,
             isInformationUpToDate: false,
+            temperatureStep: 0.0,
             weather: Weather(
               currentWeather: Info(
                 date: DateTime.now(),
@@ -78,9 +79,21 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   void changeTemperatureDegreeType() {
-    final newDegreeType = state.europeTemperature ? false : true;
+    final double newTemperatureStep;
+    final bool newDegreeType;
+
+    if (state.europeTemperature) {
+      newTemperatureStep = 273.0;
+      newDegreeType = false;
+    } else {
+      newTemperatureStep = 0.0;
+      newDegreeType = true;
+    }
     emit(
-      state.copyWith(europeTemperature: newDegreeType),
+      state.copyWith(
+        europeTemperature: newDegreeType,
+        temperatureStep: newTemperatureStep,
+      ),
     );
   }
 

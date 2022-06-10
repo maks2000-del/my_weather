@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
+import 'package:my_weather/pages/city_weather_page.dart';
+import '../helpers/citys.dart';
 import '../helpers/colors.dart' as color;
 import '../helpers/icons.dart' as icon;
 import 'home_cubit.dart';
@@ -14,11 +17,14 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final HomeCubit _homeCubit = HomeCubit();
+
   @override
   void initState() {
     _homeCubit.initState();
     super.initState();
   }
+
+  late String _selectedChoices;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +45,7 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
-            padding: const EdgeInsets.only(top: 40.0, left: 20.0, right: 20.0),
+            padding: const EdgeInsets.only(top: 35.0, left: 20.0, right: 20.0),
             child: Column(
               children: [
                 Row(
@@ -61,18 +67,62 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     Expanded(child: Container()),
+                    PopupMenuButton(
+                      icon: Icon(
+                        Icons.location_city_rounded,
+                        color: color.AppColor.homePageIcon,
+                      ),
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(15.0),
+                        ),
+                      ),
+                      color: color.AppColor.homePageMenuBackgroundColor,
+                      padding: EdgeInsets.zero,
+                      itemBuilder: (BuildContext context) {
+                        return citys.map((String choice) {
+                          return PopupMenuItem<String>(
+                            value: choice,
+                            child: Text(choice),
+                          );
+                        }).toList();
+                      },
+                      onSelected: (choice) {
+                        Get.put(choice.toString());
+                        print(choice);
+                        Get.put(state);
+
+                        Get.to(() => CityWeatherPage());
+                      },
+                    ),
                     InkWell(
                       onTap: () => _homeCubit.changeTemperatureDegreeType(),
-                      child: Icon(
-                        state.europeTemperature ? Icons.info : Icons.facebook,
-                        size: 30.0,
-                        color: color.AppColor.homePageIcons,
+                      child: Container(
+                        width: 35.0,
+                        height: 35.0,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15.0),
+                          border: Border.all(
+                            color: color.AppColor.homePageIcon,
+                            width: 1.5,
+                          ),
+                        ),
+                        child: Center(
+                          child: Text(
+                            state.europeTemperature ? 'Ru' : 'Eng',
+                            style: TextStyle(
+                              fontSize: 15.0,
+                              fontWeight: FontWeight.w400,
+                              color: color.AppColor.homePageIcon,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ],
                 ),
                 SizedBox(
-                  height: _tenthHeigh * 4,
+                  height: _tenthHeigh * 3.5,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -166,7 +216,7 @@ class _HomePageState extends State<HomePage> {
                     ? SafeArea(
                         child: Container(
                           decoration: BoxDecoration(
-                            color: color.AppColor.backgroundColor,
+                            color: color.AppColor.homePageBackgroundColor,
                             borderRadius: BorderRadius.circular(10.0),
                           ),
                           height: _tenthHeigh * 2.5,
@@ -177,7 +227,8 @@ class _HomePageState extends State<HomePage> {
                             itemBuilder: (_, element) {
                               return Container(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 20.0),
+                                  horizontal: 20.0,
+                                ),
                                 height: 35.0,
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
@@ -204,12 +255,15 @@ class _HomePageState extends State<HomePage> {
                                           .substring(0, 2)]!,
                                     ),
                                     const SizedBox(
-                                      width: 20.0,
+                                      width: 10.0,
                                     ),
-                                    Text(
-                                      state.weather!.dayWeather[element]
-                                          .temperatyre
-                                          .toString(),
+                                    SizedBox(
+                                      width: 45.0,
+                                      child: Text(
+                                        state.weather!.dayWeather[element]
+                                            .temperatyre
+                                            .toString(),
+                                      ),
                                     ),
                                   ],
                                 ),
