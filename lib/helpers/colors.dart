@@ -16,4 +16,8 @@ class AppColor {
   static Color cityPageIcon = const Color.fromARGB(255, 30, 30, 30);
   static Color cityPageTitle = const Color.fromARGB(255, 255, 255, 255);
   static Color cityPageSubtitle = const Color.fromARGB(255, 96, 96, 96);
+
+  static Color cityPageLoadingIndicatorColorOne = Colors.black;
+  static Color cityPageLoadingIndicatorColorTwo = Colors.white;
+  static Color cityPageLoadingIndicatorColorThree = Colors.grey;
 }

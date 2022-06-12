@@ -10,10 +10,10 @@ abstract class LocationLocalDataSource {
   Future<void> saveLastOnlineSessionTimeToCache(int timestamp);
 }
 
-const cashedLocation = "CASHED_LOCATION";
-const cashedLastOnlineSessionTime = "LAST_ONLINE";
-
 class LocationLocalDataSourceImpl extends LocationLocalDataSource {
+  static String cashedLocation = "CASHED_LOCATION";
+  static String cashedLastOnlineSessionTime = "LAST_ONLINE";
+
   final SharedPreferences sharedPreferences;
 
   LocationLocalDataSourceImpl({required this.sharedPreferences});

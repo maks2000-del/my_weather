@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:my_weather/weather_app.dart';
 
-import 'injector.dart';
+import 'package:my_weather/pages/weather_app.dart';
+import 'package:my_weather/injector.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

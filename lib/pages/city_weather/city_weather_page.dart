@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:loading_indicator/loading_indicator.dart';
-import 'package:my_weather/models/lacation_model.dart';
-import 'package:my_weather/models/weather_model.dart';
 
-import '../helpers/colors.dart' as color;
-import '../helpers/icons.dart' as icon;
-import '../injector.dart';
-import '../models/info_model.dart';
-import '../repositories/location_repository_http.dart';
-import '../repositories/weather_repository_http.dart';
+import 'package:my_weather/injector.dart';
+import 'package:my_weather/models/info_model.dart';
+import 'package:my_weather/pages/city_weather/city_weather_cubit.dart';
+import 'package:my_weather/pages/city_weather/city_weather_state.dart';
+
+import 'package:my_weather/helpers/colors.dart' as color;
+import 'package:my_weather/helpers/icons.dart' as icon;
 
 class CityWeatherPage extends StatefulWidget {
   final String cityName;
@@ -26,58 +26,52 @@ class CityWeatherPage extends StatefulWidget {
 }
 
 class _CityWeatherPageState extends State<CityWeatherPage> {
-  Weather? _weather;
-
-  void _getCurrentCityWeather() async {
-    final _locationPerositoryImpl = locator.get<LocationHttpRerositoryImpl>();
-    final _weatherPerositoryImpl = locator.get<WeatherPerositoryImpl>();
-
-    final Location? _location =
-        await _locationPerositoryImpl.getCurrentCoordinates(widget.cityName);
-
-    _weather = await _weatherPerositoryImpl.getCurrentWather(
-        _location!.latitude!, _location.longitude!);
-
-    setState(() {});
-  }
+  final CityWeatherCubit _cityWeatherCubit = locator.get<CityWeatherCubit>();
 
   @override
   void initState() {
-    _getCurrentCityWeather();
+    _cityWeatherCubit.initState(widget.cityName);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        padding: const EdgeInsets.symmetric(vertical: 30.0, horizontal: 15.0),
-        color: color.AppColor.cityPageBackgroundColor,
-        child: Column(
-          children: [
-            _navBar(widget.cityName),
-            const SizedBox(
-              height: 150.0,
+    return BlocBuilder<CityWeatherCubit, CityWeatherState>(
+      bloc: _cityWeatherCubit,
+      builder: (context, state) {
+        return Scaffold(
+          body: Container(
+            padding:
+                const EdgeInsets.symmetric(vertical: 32.0, horizontal: 16.0),
+            color: color.AppColor.cityPageBackgroundColor,
+            child: Column(
+              children: [
+                _navBar(widget.cityName),
+                const SizedBox(
+                  height: 150.0,
+                ),
+                state.isDataLoaded
+                    ? _weatherInfo(
+                        state.info!,
+                        widget.europeTemperature,
+                      )
+                    : SizedBox(
+                        width: 180.0,
+                        child: LoadingIndicator(
+                          indicatorType:
+                              Indicator.ballTrianglePathColoredFilled,
+                          colors: [
+                            color.AppColor.cityPageLoadingIndicatorColorOne,
+                            color.AppColor.cityPageLoadingIndicatorColorTwo,
+                            color.AppColor.cityPageLoadingIndicatorColorThree,
+                          ],
+                        ),
+                      ),
+              ],
             ),
-            _weather != null
-                ? _weatherInfo(
-                    _weather!.currentWeather,
-                    widget.europeTemperature,
-                  )
-                : const SizedBox(
-                    width: 180.0,
-                    child: LoadingIndicator(
-                      indicatorType: Indicator.ballTrianglePathColoredFilled,
-                      colors: [
-                        Colors.white,
-                        Colors.black,
-                        Colors.grey,
-                      ],
-                    ),
-                  ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }
@@ -92,7 +86,7 @@ Widget _navBar(String cityName) {
           color: color.AppColor.cityPageIcon,
         ),
       ),
-      Expanded(child: Container()),
+      const Spacer(),
       Text(
         cityName,
         style: TextStyle(

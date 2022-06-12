@@ -9,11 +9,11 @@ abstract class WeatherLocalDataSource {
   Future<void> saveWeatherToCache(Weather weather);
 }
 
-const cashedCurrentWeather = "CASHED_CURRENT_WEATHER";
-const cashedHourWeathe = "CASHED_HOUR_WEATHER";
-const cashedDayWeathe = "CASHED_DAY_WEATHER";
-
 class WeatherLocalDataSourceImpl extends WeatherLocalDataSource {
+  final String cashedCurrentWeather = "CASHED_CURRENT_WEATHER";
+  final String cashedHourWeathe = "CASHED_HOUR_WEATHER";
+  final String cashedDayWeathe = "CASHED_DAY_WEATHER";
+
   final SharedPreferences sharedPreferences;
 
   WeatherLocalDataSourceImpl({required this.sharedPreferences});
@@ -37,9 +37,7 @@ class WeatherLocalDataSourceImpl extends WeatherLocalDataSource {
         final hourWeathe = await Future.value(
           jsonHourWeathe
               .map(
-                (info) => Info.fromLocalJson(
-                  json.decode(info),
-                ),
+                (info) => Info.fromLocalJson(json.decode(info)),
               )
               .toList(),
         );
@@ -47,13 +45,10 @@ class WeatherLocalDataSourceImpl extends WeatherLocalDataSource {
         final dayWeathe = await Future.value(
           jsonDayWeathe
               .map(
-                (info) => Info.fromLocalJson(
-                  json.decode(info),
-                ),
+                (info) => Info.fromLocalJson(json.decode(info)),
               )
               .toList(),
         );
-        print(currentWeather.iconId);
         return Weather(
           currentWeather: currentWeather,
           hourWeahter: hourWeathe,

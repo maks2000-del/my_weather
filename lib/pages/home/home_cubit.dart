@@ -1,33 +1,31 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_weather/helpers/internet_connection.dart';
-import 'package:my_weather/injector.dart';
+
 import 'package:my_weather/models/info_model.dart';
 import 'package:my_weather/models/weather_model.dart';
-import 'package:my_weather/repositories/location_repository_cashe.dart';
+import 'package:my_weather/pages/home/home_state.dart';
 
-import '../repositories/location_repository_http.dart';
-import '../repositories/weather_repository_cashe.dart';
-import '../repositories/weather_repository_http.dart';
-import 'home_state.dart';
-
-import '../helpers/dictionaries.dart' as dictionary;
+import 'package:my_weather/helpers/dictionaries.dart' as dictionary;
 
 class HomeCubit extends Cubit<HomeState> {
-  final _internetConnection = locator.get<InternetConnection>();
-
-  final _locationPerositoryImpl = locator.get<LocationHttpRerositoryImpl>();
-  final _weatherPerositoryImpl = locator.get<WeatherPerositoryImpl>();
-  final _localDataSourceImpl = locator.get<LocationLocalDataSourceImpl>();
-  final _weatherLocalDataSourceImpl = locator.get<WeatherLocalDataSourceImpl>();
-
-  HomeCubit()
-      : super(
+  HomeCubit({
+    required internetConnection,
+    required locationHttpRepositoryImpl,
+    required weatherHttpPerositoryImpl,
+    required locationLocalDataSourceImpl,
+    required weatherLocalDataSourceImpl,
+  }) : super(
           HomeState(
             title: 'up to date',
             europeTemperature: false,
             isDataLoaded: false,
             isInformationUpToDate: false,
             temperatureStep: 0.0,
+            internetConnection: internetConnection,
+            locationHttpRepositoryImpl: locationHttpRepositoryImpl,
+            weatherHttpPerositoryImpl: weatherHttpPerositoryImpl,
+            locationLocalDataSourceImpl: locationLocalDataSourceImpl,
+            weatherLocalDataSourceImpl: weatherLocalDataSourceImpl,
             weather: Weather(
               currentWeather: Info(
                 date: DateTime.now(),
@@ -42,26 +40,28 @@ class HomeCubit extends Cubit<HomeState> {
         );
 
   void initState() async {
-    await _internetConnection.checkForInternetConnection();
-    if (_internetConnection.status) {
+    await state.internetConnection.checkForInternetConnection();
+    if (state.internetConnection.status) {
       try {
-        final location =
-            await _locationPerositoryImpl.getCurrentCoordinates("Minsk");
+        final location = await state.locationHttpRepositoryImpl
+            .getCurrentCoordinates("Minsk");
 
         if (location != null) {
-          _localDataSourceImpl.saveLocationToCache(location);
+          state.locationLocalDataSourceImpl.saveLocationToCache(location);
           emit(
             state.copyWith(location: location),
           );
-          final weather = await _weatherPerositoryImpl.getCurrentWather(
+          final weather =
+              await state.weatherHttpPerositoryImpl.getCurrentWather(
             location.latitude!,
             location.longitude!,
           );
           if (weather != null) {
-            await _localDataSourceImpl.saveLastOnlineSessionTimeToCache(
+            await state.locationLocalDataSourceImpl
+                .saveLastOnlineSessionTimeToCache(
               DateTime.now().millisecondsSinceEpoch,
             );
-            _weatherLocalDataSourceImpl.saveWeatherToCache(weather);
+            state.weatherLocalDataSourceImpl.saveWeatherToCache(weather);
 
             emit(
               state.copyWith(
@@ -73,14 +73,15 @@ class HomeCubit extends Cubit<HomeState> {
           }
         }
       } catch (e) {
-        throw Exception('loading dara error :( $e');
+        debugPrint('loading dara error :( $e');
       }
     } else {
       try {
-        final location = await _localDataSourceImpl.getLastLocationFromCache();
+        final location =
+            await state.locationLocalDataSourceImpl.getLastLocationFromCache();
         final info = await howOldIsDataInfo();
         final weather =
-            await _weatherLocalDataSourceImpl.getLastWeatherFromCache();
+            await state.weatherLocalDataSourceImpl.getLastWeatherFromCache();
 
         emit(
           state.copyWith(
@@ -97,37 +98,27 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   void changeLanguage() {
-    final double newTemperatureStep;
-    final bool newDegreeType;
-    final Map<String, String> newAppDictionary;
+    final oldEuropeTemperature = state.europeTemperature;
 
-    if (state.europeTemperature) {
-      newTemperatureStep = 0.0;
-      newDegreeType = false;
-      newAppDictionary = dictionary.engDictionary;
-    } else {
-      newTemperatureStep = 273.0;
-      newDegreeType = true;
-      newAppDictionary = dictionary.ruDictionary;
-    }
     emit(
       state.copyWith(
-        europeTemperature: newDegreeType,
-        temperatureStep: newTemperatureStep,
-        appDictionary: newAppDictionary,
+        europeTemperature: oldEuropeTemperature ? false : true,
+        temperatureStep: oldEuropeTemperature ? 0.0 : 273.0,
+        appDictionary: oldEuropeTemperature
+            ? dictionary.engDictionary
+            : dictionary.ruDictionary,
       ),
     );
   }
 
   Future<String> howOldIsDataInfo() async {
-    final int lastOnlineSessionTime =
-        await _localDataSourceImpl.getLastOnlineSessionTimeFromCache();
+    final int lastOnlineSessionTime = await state.locationLocalDataSourceImpl
+        .getLastOnlineSessionTimeFromCache();
     final int currentTime = DateTime.now().millisecondsSinceEpoch;
     String infoString;
 
     final lastOnlineSessionTimeDifference = DateTime.fromMillisecondsSinceEpoch(
         currentTime - lastOnlineSessionTime);
-    //final res = '${lastOnlineSessionTimeDifference.day - 1}|${lastOnlineSessionTimeDifference.hour}|${lastOnlineSessionTimeDifference.minute}';
 
     if (lastOnlineSessionTimeDifference.day - 1 != 0) {
       infoString = "${lastOnlineSessionTimeDifference.day - 1} days ago";

@@ -1,11 +1,13 @@
 import 'package:get_it/get_it.dart';
+import 'package:my_weather/pages/city_weather/city_weather_cubit.dart';
+import 'package:my_weather/pages/home/home_cubit.dart';
 import 'package:my_weather/repositories/weather_repository_http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'helpers/internet_connection.dart';
-import 'repositories/location_repository_http.dart';
-import 'repositories/location_repository_cashe.dart';
-import 'repositories/weather_repository_cashe.dart';
+import 'package:my_weather/helpers/internet_connection.dart';
+import 'package:my_weather/repositories/location_repository_http.dart';
+import 'package:my_weather/repositories/location_repository_cache.dart';
+import 'package:my_weather/repositories/weather_repository_cache.dart';
 
 final locator = GetIt.instance;
 
@@ -13,6 +15,7 @@ Future<void> setUp() async {
   _setUpConnection();
   await _setUpCasheDataSorce();
   _setUpHttpRerositories();
+  _setUpCubits();
 }
 
 void _setUpConnection() {
@@ -22,11 +25,13 @@ void _setUpConnection() {
 }
 
 void _setUpHttpRerositories() {
-  locator.registerFactory<WeatherPerositoryImpl>(
-    () => WeatherPerositoryImpl(),
+  final internetConnection = locator.get<InternetConnection>();
+
+  locator.registerFactory<WeatherHttpPerositoryImpl>(
+    () => WeatherHttpPerositoryImpl(internetConnection: internetConnection),
   );
-  locator.registerFactory<LocationHttpRerositoryImpl>(
-    () => LocationHttpRerositoryImpl(),
+  locator.registerFactory<LocationHttpRepositoryImpl>(
+    () => LocationHttpRepositoryImpl(internetConnection: internetConnection),
   );
 }
 
@@ -39,5 +44,30 @@ Future<void> _setUpCasheDataSorce() async {
 
   locator.registerFactory<WeatherLocalDataSourceImpl>(
     () => WeatherLocalDataSourceImpl(sharedPreferences: sharedPreferences),
+  );
+}
+
+void _setUpCubits() {
+  final internetConnection = locator.get<InternetConnection>();
+  final weatherHttpPerositoryImpl = locator.get<WeatherHttpPerositoryImpl>();
+  final locationHttpRepositoryImpl = locator.get<LocationHttpRepositoryImpl>();
+  final weatherLocalDataSourceImpl = locator.get<WeatherLocalDataSourceImpl>();
+  final locationLocalDataSourceImpl =
+      locator.get<LocationLocalDataSourceImpl>();
+
+  locator.registerFactory<HomeCubit>(
+    () => HomeCubit(
+      internetConnection: internetConnection,
+      locationHttpRepositoryImpl: locationHttpRepositoryImpl,
+      locationLocalDataSourceImpl: locationLocalDataSourceImpl,
+      weatherLocalDataSourceImpl: weatherLocalDataSourceImpl,
+      weatherHttpPerositoryImpl: weatherHttpPerositoryImpl,
+    ),
+  );
+  locator.registerFactory<CityWeatherCubit>(
+    () => CityWeatherCubit(
+      locationHttpRepositoryImpl: locationHttpRepositoryImpl,
+      weatherHttpPerositoryImpl: weatherHttpPerositoryImpl,
+    ),
   );
 }

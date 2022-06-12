@@ -1,27 +1,28 @@
 import 'dart:convert';
 
-import 'package:get_it/get_it.dart';
+import 'package:flutter/cupertino.dart';
 
-import '../helpers/internet_connection.dart';
+import 'package:my_weather/helpers/internet_connection.dart';
+import 'package:my_weather/models/weather_model.dart';
 
 import 'package:http/http.dart' as http;
 
-import '../models/weather_model.dart';
-
-abstract class WeatherPerository {
+abstract class WeatherHttpPerository {
   Future<Weather?> getCurrentWather(double lat, double lon);
 }
 
-class WeatherPerositoryImpl implements WeatherPerository {
-  final _internetConnection = GetIt.instance.get<InternetConnection>();
-  final apiKey = "c8e0382199b302c66ba31651d6a15c26";
+class WeatherHttpPerositoryImpl implements WeatherHttpPerository {
+  final InternetConnection internetConnection;
+  final _apiKey = "c8e0382199b302c66ba31651d6a15c26";
+
+  WeatherHttpPerositoryImpl({required this.internetConnection});
 
   @override
   Future<Weather?> getCurrentWather(double lat, double lon) async {
     try {
       final response = await http.get(
         Uri.parse(
-          "${_internetConnection.apiUrl}data/2.5/onecall?lat=$lat&lon=$lon&exclude=minutely,alerts&appid=$apiKey",
+          "${internetConnection.apiUrl}data/2.5/onecall?lat=$lat&lon=$lon&exclude=minutely,alerts&appid=$_apiKey",
         ),
       );
 
@@ -33,7 +34,8 @@ class WeatherPerositoryImpl implements WeatherPerository {
         return null;
       }
     } catch (e) {
-      throw Exception(e.toString());
+      debugPrint(e.toString());
+      return null;
     }
   }
 }

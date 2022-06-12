@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:loading_indicator/loading_indicator.dart';
-import 'package:my_weather/pages/city_weather_page.dart';
-import '../helpers/citys.dart';
-import '../helpers/colors.dart' as color;
-import '../helpers/icons.dart' as icon;
-import 'home_cubit.dart';
-import 'home_state.dart';
+
+import 'package:my_weather/helpers/citys.dart';
+import 'package:my_weather/injector.dart';
+import 'package:my_weather/pages/city_weather/city_weather_page.dart';
+import 'package:my_weather/pages/home/home_cubit.dart';
+import 'package:my_weather/pages/home/home_state.dart';
+
+import 'package:my_weather/helpers/colors.dart' as color;
+import 'package:my_weather/helpers/icons.dart' as icon;
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -17,8 +20,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final HomeCubit _homeCubit = HomeCubit();
-
+  final HomeCubit _homeCubit = locator.get<HomeCubit>();
   @override
   void initState() {
     _homeCubit.initState();
@@ -44,37 +46,26 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
-            padding: const EdgeInsets.only(top: 35.0, left: 20.0, right: 20.0),
+            padding:
+                const EdgeInsets.symmetric(vertical: 32.0, horizontal: 16.0),
             child: state.isDataLoaded
                 ? Column(
                     children: [
                       _navBar(state),
-                      _weatherInfo(
-                        _tenthHeigh,
-                        state,
-                      ),
-                      const SizedBox(
-                        height: 20.0,
-                      ),
-                      _hourWeatherInfo(
-                        _tenthHeigh,
-                        _width,
-                        state,
-                      ),
-                      _dayWeatherInfo(
-                        _tenthHeigh,
-                        state,
-                      ),
+                      _weatherInfo(_tenthHeigh, state),
+                      const SizedBox(height: 20.0),
+                      _hourWeatherInfo(_tenthHeigh, _width, state),
+                      _dayWeatherInfo(_tenthHeigh, state),
                     ],
                   )
-                : const Center(
+                : Center(
                     child: SizedBox(
                       width: 150.0,
                       child: LoadingIndicator(
                         indicatorType: Indicator.ballRotateChase,
                         colors: [
-                          Colors.white,
-                          Colors.black,
+                          color.AppColor.cityPageLoadingIndicatorColorOne,
+                          color.AppColor.cityPageLoadingIndicatorColorTwo,
                         ],
                       ),
                     ),
@@ -104,7 +95,7 @@ class _HomePageState extends State<HomePage> {
             color: color.AppColor.homePageTitle,
           ),
         ),
-        Expanded(child: Container()),
+        const Spacer(),
         PopupMenuButton(
           icon: Icon(
             Icons.location_city_rounded,
