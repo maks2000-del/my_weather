@@ -99,22 +99,22 @@ class HomeCubit extends Cubit<HomeState> {
   void changeLanguage() {
     final double newTemperatureStep;
     final bool newDegreeType;
-    final Map<String, String> appDictionary;
+    final Map<String, String> newAppDictionary;
 
     if (state.europeTemperature) {
       newTemperatureStep = 0.0;
       newDegreeType = false;
-      appDictionary = dictionary.engDictionary;
+      newAppDictionary = dictionary.engDictionary;
     } else {
       newTemperatureStep = 273.0;
       newDegreeType = true;
-      appDictionary = dictionary.ruDictionary;
+      newAppDictionary = dictionary.ruDictionary;
     }
     emit(
       state.copyWith(
         europeTemperature: newDegreeType,
         temperatureStep: newTemperatureStep,
-        appDictionary: appDictionary,
+        appDictionary: newAppDictionary,
       ),
     );
   }

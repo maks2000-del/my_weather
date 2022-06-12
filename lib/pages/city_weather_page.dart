@@ -7,6 +7,7 @@ import 'package:my_weather/models/weather_model.dart';
 import '../helpers/colors.dart' as color;
 import '../helpers/icons.dart' as icon;
 import '../injector.dart';
+import '../models/info_model.dart';
 import '../repositories/location_repository_http.dart';
 import '../repositories/weather_repository_http.dart';
 
@@ -25,22 +26,24 @@ class CityWeatherPage extends StatefulWidget {
 }
 
 class _CityWeatherPageState extends State<CityWeatherPage> {
-  final _locationPerositoryImpl = locator.get<LocationHttpRerositoryImpl>();
-  final _weatherPerositoryImpl = locator.get<WeatherPerositoryImpl>();
-  Weather? weather;
+  Weather? _weather;
 
-  void getCurrentCityWeather() async {
-    final Location? location =
+  void _getCurrentCityWeather() async {
+    final _locationPerositoryImpl = locator.get<LocationHttpRerositoryImpl>();
+    final _weatherPerositoryImpl = locator.get<WeatherPerositoryImpl>();
+
+    final Location? _location =
         await _locationPerositoryImpl.getCurrentCoordinates(widget.cityName);
 
-    weather = await _weatherPerositoryImpl.getCurrentWather(
-        location!.latitude!, location.longitude!);
+    _weather = await _weatherPerositoryImpl.getCurrentWather(
+        _location!.latitude!, _location.longitude!);
+
     setState(() {});
   }
 
   @override
   void initState() {
-    getCurrentCityWeather();
+    _getCurrentCityWeather();
     super.initState();
   }
 
@@ -52,65 +55,14 @@ class _CityWeatherPageState extends State<CityWeatherPage> {
         color: color.AppColor.cityPageBackgroundColor,
         child: Column(
           children: [
-            Row(
-              children: [
-                IconButton(
-                  onPressed: () => Get.back(),
-                  icon: Icon(
-                    Icons.arrow_back_ios,
-                    color: color.AppColor.cityPageIcon,
-                  ),
-                ),
-                Expanded(child: Container()),
-                Text(
-                  widget.cityName,
-                  style: TextStyle(
-                    fontSize: 25.0,
-                    fontWeight: FontWeight.w300,
-                    color: color.AppColor.cityPageIcon,
-                  ),
-                ),
-              ],
-            ),
+            _navBar(widget.cityName),
             const SizedBox(
               height: 150.0,
             ),
-            weather != null
-                ? Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        width: 120.0,
-                        icon.assetImages[
-                            weather!.currentWeather.iconId.substring(0, 2)]!,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            (weather!.currentWeather.temperatyre -
-                                    (widget.europeTemperature ? 273.0 : 0.0))
-                                .toStringAsFixed(2)
-                                .toString(),
-                            style: TextStyle(
-                              fontSize: 50.0,
-                              color: color.AppColor.cityPageTitle,
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 20.0,
-                          ),
-                          Text(
-                            widget.europeTemperature ? "C" : "F",
-                            style: TextStyle(
-                              fontSize: 30.0,
-                              color: color.AppColor.cityPageSubtitle,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+            _weather != null
+                ? _weatherInfo(
+                    _weather!.currentWeather,
+                    widget.europeTemperature,
                   )
                 : const SizedBox(
                     width: 180.0,
@@ -128,4 +80,64 @@ class _CityWeatherPageState extends State<CityWeatherPage> {
       ),
     );
   }
+}
+
+Widget _navBar(String cityName) {
+  return Row(
+    children: [
+      IconButton(
+        onPressed: () => Get.back(),
+        icon: Icon(
+          Icons.arrow_back_ios,
+          color: color.AppColor.cityPageIcon,
+        ),
+      ),
+      Expanded(child: Container()),
+      Text(
+        cityName,
+        style: TextStyle(
+          fontSize: 25.0,
+          fontWeight: FontWeight.w300,
+          color: color.AppColor.cityPageIcon,
+        ),
+      ),
+    ],
+  );
+}
+
+Widget _weatherInfo(Info info, bool europeTemperature) {
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Image.asset(
+        width: 120.0,
+        icon.assetImages[info.iconId.substring(0, 2)]!,
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            (info.temperatyre - (europeTemperature ? 273.0 : 0.0))
+                .toStringAsFixed(2)
+                .toString(),
+            style: TextStyle(
+              fontSize: 50.0,
+              color: color.AppColor.cityPageTitle,
+            ),
+          ),
+          const SizedBox(
+            width: 20.0,
+          ),
+          Text(
+            europeTemperature ? "C" : "F",
+            style: TextStyle(
+              fontSize: 30.0,
+              color: color.AppColor.cityPageSubtitle,
+            ),
+          ),
+        ],
+      ),
+    ],
+  );
 }
