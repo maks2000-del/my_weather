@@ -34,21 +34,24 @@ class WeatherLocalDataSourceImpl extends WeatherLocalDataSource {
           ),
         );
 
-        final hourWeathe = await Future.value(
-          jsonHourWeathe
-              .map(
-                (info) => Info.fromLocalJson(json.decode(info)),
-              )
-              .toList(),
-        );
+        final hourWeathe = await Future.value(jsonHourWeathe
+            .map(
+              (info) => Info.fromLocalJson(json.decode(info)),
+            )
+            .toList());
 
-        final dayWeathe = await Future.value(
-          jsonDayWeathe
-              .map(
-                (info) => Info.fromLocalJson(json.decode(info)),
-              )
-              .toList(),
-        );
+        hourWeathe.sort((a, b) => a.date.millisecondsSinceEpoch
+            .compareTo(b.date.millisecondsSinceEpoch));
+
+        final dayWeathe = await Future.value(jsonDayWeathe
+            .map(
+              (info) => Info.fromLocalJson(json.decode(info)),
+            )
+            .toList());
+
+        dayWeathe.sort((a, b) => a.date.millisecondsSinceEpoch
+            .compareTo(b.date.millisecondsSinceEpoch));
+
         return Weather(
           currentWeather: currentWeather,
           hourWeahter: hourWeathe,

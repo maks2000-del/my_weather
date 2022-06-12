@@ -34,8 +34,7 @@ class Info {
       );
 
   factory Info.fromLocalJson(Map<String, dynamic> json) => Info(
-        date:
-            DateTime.fromMillisecondsSinceEpoch(int.parse(json['date']) * 1000),
+        date: DateTime.fromMillisecondsSinceEpoch(int.parse(json['date'])),
         temperatyre: double.parse(json['temperatyre']),
         iconId: json['iconId'],
       );

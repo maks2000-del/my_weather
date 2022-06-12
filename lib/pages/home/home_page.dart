@@ -268,7 +268,7 @@ class _HomePageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   SizedBox(
-                    width: 30.0,
+                    width: 35.0,
                     child: Text(
                       '${state.weather!.dayWeather[element].date.month.toString()}/${state.weather!.dayWeather[element].date.day.toString()}',
                     ),
