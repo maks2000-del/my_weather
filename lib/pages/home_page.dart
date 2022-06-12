@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:loading_indicator/loading_indicator.dart';
 import 'package:my_weather/pages/city_weather_page.dart';
 import '../helpers/citys.dart';
 import '../helpers/colors.dart' as color;
@@ -24,12 +25,10 @@ class _HomePageState extends State<HomePage> {
     super.initState();
   }
 
-  late String _selectedChoices;
-
   @override
   Widget build(BuildContext context) {
     var _tenthHeigh = MediaQuery.of(context).size.height / 10;
-    var _width = MediaQuery.of(context).size.height;
+    var _width = MediaQuery.of(context).size.width;
     return BlocBuilder<HomeCubit, HomeState>(
       bloc: _homeCubit,
       builder: (context, state) {
@@ -46,142 +45,141 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             padding: const EdgeInsets.only(top: 35.0, left: 20.0, right: 20.0),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      '${state.location?.cityName ?? 'city'} | ',
-                      style: TextStyle(
-                        fontSize: 25.0,
-                        fontWeight: FontWeight.w300,
-                        color: color.AppColor.homePageTitle,
-                      ),
-                    ),
-                    Text(
-                      state.title,
-                      style: TextStyle(
-                        fontSize: 15.0,
-                        fontWeight: FontWeight.w300,
-                        color: color.AppColor.homePageTitle,
-                      ),
-                    ),
-                    Expanded(child: Container()),
-                    PopupMenuButton(
-                      icon: Icon(
-                        Icons.location_city_rounded,
-                        color: color.AppColor.homePageIcon,
-                      ),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(15.0),
-                        ),
-                      ),
-                      color: color.AppColor.homePageMenuBackgroundColor,
-                      padding: EdgeInsets.zero,
-                      itemBuilder: (BuildContext context) {
-                        return citys.map((String choice) {
-                          return PopupMenuItem<String>(
-                            value: choice,
-                            child: Text(choice),
-                          );
-                        }).toList();
-                      },
-                      onSelected: (choice) {
-                        Get.put(choice.toString());
-                        print(choice);
-                        Get.put(state);
-
-                        Get.to(() => CityWeatherPage());
-                      },
-                    ),
-                    InkWell(
-                      onTap: () => _homeCubit.changeTemperatureDegreeType(),
-                      child: Container(
-                        width: 35.0,
-                        height: 35.0,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15.0),
-                          border: Border.all(
-                            color: color.AppColor.homePageIcon,
-                            width: 1.5,
-                          ),
-                        ),
-                        child: Center(
-                          child: Text(
-                            state.europeTemperature ? 'Ru' : 'Eng',
-                            style: TextStyle(
-                              fontSize: 15.0,
-                              fontWeight: FontWeight.w400,
-                              color: color.AppColor.homePageIcon,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: _tenthHeigh * 3.5,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+            child: state.isDataLoaded
+                ? Column(
                     children: [
-                      state.isDataLoaded
-                          ? Image.asset(
-                              width: 120.0,
-                              icon.assetImages[state
-                                  .weather!.currentWeather.iconId
-                                  .substring(0, 2)]!,
-                            )
-                          : Container(),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            state.weather?.currentWeather.temperatyre
-                                    .toString() ??
-                                'waiting for data',
+                            '${state.location?.cityName ?? 'city'} | ',
                             style: TextStyle(
-                              fontSize: 50.0,
+                              fontSize: 25.0,
+                              fontWeight: FontWeight.w300,
                               color: color.AppColor.homePageTitle,
                             ),
                           ),
-                          const SizedBox(
-                            width: 20.0,
-                          ),
                           Text(
-                            state.europeTemperature ? "C" : "F",
+                            state.title,
                             style: TextStyle(
-                              fontSize: 30.0,
-                              color: color.AppColor.homePageSubtitle,
+                              fontSize: 15.0,
+                              fontWeight: FontWeight.w300,
+                              color: color.AppColor.homePageTitle,
+                            ),
+                          ),
+                          Expanded(child: Container()),
+                          PopupMenuButton(
+                            icon: Icon(
+                              Icons.location_city_rounded,
+                              color: color.AppColor.homePageIcon,
+                            ),
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(15.0),
+                              ),
+                            ),
+                            color: color.AppColor.homePageMenuBackgroundColor,
+                            padding: EdgeInsets.zero,
+                            itemBuilder: (BuildContext context) {
+                              return citys.map((String choice) {
+                                return PopupMenuItem<String>(
+                                  value: choice,
+                                  child: Text(choice),
+                                );
+                              }).toList();
+                            },
+                            onSelected: (choice) {
+                              Get.to(
+                                () => CityWeatherPage(
+                                  cityName: choice.toString(),
+                                  europeTemperature: state.europeTemperature,
+                                ),
+                              );
+                            },
+                          ),
+                          InkWell(
+                            onTap: () => _homeCubit.changeLanguage(),
+                            child: Container(
+                              width: 35.0,
+                              height: 35.0,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15.0),
+                                border: Border.all(
+                                  color: color.AppColor.homePageIcon,
+                                  width: 1.5,
+                                ),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  state.europeTemperature ? 'Ru' : 'Eng',
+                                  style: TextStyle(
+                                    fontSize: 15.0,
+                                    fontWeight: FontWeight.w400,
+                                    color: color.AppColor.homePageIcon,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ],
                       ),
-                    ],
-                  ),
-                ),
-                state.isDataLoaded
-                    //TODO problems with right and left padding (some data crops)
-                    ? SizedBox(
+                      SizedBox(
+                        height: _tenthHeigh * 3.5,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              width: 120.0,
+                              icon.assetImages[state
+                                  .weather!.currentWeather.iconId
+                                  .substring(0, 2)]!,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  (state.weather!.currentWeather.temperatyre -
+                                          state.temperatureStep)
+                                      .toStringAsFixed(2)
+                                      .toString(),
+                                  style: TextStyle(
+                                    fontSize: 50.0,
+                                    color: color.AppColor.homePageTitle,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 20.0,
+                                ),
+                                Text(
+                                  state.europeTemperature ? "C" : "F",
+                                  style: TextStyle(
+                                    fontSize: 30.0,
+                                    color: color.AppColor.homePageSubtitle,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
                         height: _tenthHeigh * 1.5,
                         child: OverflowBox(
                           maxWidth: _width,
                           child: MediaQuery.removePadding(
-                            removeRight: true,
                             removeLeft: true,
+                            removeRight: true,
                             context: context,
                             child: ListView.builder(
                               shrinkWrap: true,
                               scrollDirection: Axis.horizontal,
-                              itemCount: state.weather?.hourWeahter.length ?? 0,
+                              itemCount: 7,
                               itemBuilder: (_, element) {
                                 return Container(
                                   margin: const EdgeInsets.symmetric(
                                     horizontal: 10.0,
                                   ),
-                                  width: 60.0,
+                                  width: 70.0,
                                   child: Column(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceAround,
@@ -207,13 +205,11 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                         ),
-                      )
-                    : const Text('loading..'),
-                const SizedBox(
-                  height: 20.0,
-                ),
-                state.isDataLoaded
-                    ? SafeArea(
+                      ),
+                      const SizedBox(
+                        height: 20.0,
+                      ),
+                      SafeArea(
                         child: Container(
                           decoration: BoxDecoration(
                             color: color.AppColor.homePageBackgroundColor,
@@ -271,10 +267,21 @@ class _HomePageState extends State<HomePage> {
                             },
                           ),
                         ),
-                      )
-                    : const Text('loading..'),
-              ],
-            ),
+                      ),
+                    ],
+                  )
+                : const Center(
+                    child: SizedBox(
+                      width: 150.0,
+                      child: LoadingIndicator(
+                        indicatorType: Indicator.ballRotateChase,
+                        colors: [
+                          Colors.white,
+                          Colors.black,
+                        ],
+                      ),
+                    ),
+                  ),
           ),
         );
       },

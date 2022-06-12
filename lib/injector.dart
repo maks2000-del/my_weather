@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'helpers/internet_connection.dart';
 import 'repositories/location_repository_http.dart';
 import 'repositories/location_repository_cashe.dart';
+import 'repositories/weather_repository_cashe.dart';
 
 final locator = GetIt.instance;
 
@@ -12,7 +13,6 @@ Future<void> setUp() async {
   _setUpConnection();
   await _setUpCasheDataSorce();
   _setUpHttpRerositories();
-  _setUpCubits();
 }
 
 void _setUpConnection() {
@@ -36,6 +36,8 @@ Future<void> _setUpCasheDataSorce() async {
   locator.registerFactory<LocationLocalDataSourceImpl>(
     () => LocationLocalDataSourceImpl(sharedPreferences: sharedPreferences),
   );
-}
 
-void _setUpCubits() {}
+  locator.registerFactory<WeatherLocalDataSourceImpl>(
+    () => WeatherLocalDataSourceImpl(sharedPreferences: sharedPreferences),
+  );
+}

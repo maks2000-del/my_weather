@@ -7,6 +7,7 @@ class HomeState {
   final bool isDataLoaded;
   final bool isInformationUpToDate;
   final double temperatureStep;
+  final Map<String, String> appDictionary;
   final Location? location;
   final Weather? weather;
 
@@ -16,6 +17,7 @@ class HomeState {
     required this.isDataLoaded,
     required this.isInformationUpToDate,
     required this.temperatureStep,
+    required this.appDictionary,
     this.location,
     this.weather,
   });
@@ -26,6 +28,7 @@ class HomeState {
     bool? isDataLoaded,
     bool? isInformationUpToDate,
     double? temperatureStep,
+    Map<String, String>? appDictionary,
     Location? location,
     Weather? weather,
   }) {
@@ -36,6 +39,7 @@ class HomeState {
       isInformationUpToDate:
           isInformationUpToDate ?? this.isInformationUpToDate,
       temperatureStep: temperatureStep ?? this.temperatureStep,
+      appDictionary: appDictionary ?? this.appDictionary,
       location: location ?? this.location,
       weather: weather ?? this.weather,
     );

@@ -1,8 +1,7 @@
 final List<String> citys = <String>[
   "Brest",
   "Grodno",
-  "Vitebsk",
-  "Mogilev",
-  "Ghomel",
+  "Viciebsk",
+  "Gomel",
   "Minsk",
 ];

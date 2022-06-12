@@ -34,14 +34,15 @@ class Info {
       );
 
   factory Info.fromLocalJson(Map<String, dynamic> json) => Info(
-        date: json['date'],
-        temperatyre: json['temperatyre'],
+        date:
+            DateTime.fromMillisecondsSinceEpoch(int.parse(json['date']) * 1000),
+        temperatyre: double.parse(json['temperatyre']),
         iconId: json['iconId'],
       );
 
   static Map<String, String> toMap(Info info) {
     return {
-      'date': info.date.toString(),
+      'date': info.date.millisecondsSinceEpoch.toString(),
       'temperatyre': info.temperatyre.toString(),
       'iconId': info.iconId,
     };

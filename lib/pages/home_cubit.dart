@@ -6,8 +6,11 @@ import 'package:my_weather/models/weather_model.dart';
 import 'package:my_weather/repositories/location_repository_cashe.dart';
 
 import '../repositories/location_repository_http.dart';
+import '../repositories/weather_repository_cashe.dart';
 import '../repositories/weather_repository_http.dart';
 import 'home_state.dart';
+
+import '../helpers/dictionaries.dart' as dictionary;
 
 class HomeCubit extends Cubit<HomeState> {
   final _internetConnection = locator.get<InternetConnection>();
@@ -15,12 +18,13 @@ class HomeCubit extends Cubit<HomeState> {
   final _locationPerositoryImpl = locator.get<LocationHttpRerositoryImpl>();
   final _weatherPerositoryImpl = locator.get<WeatherPerositoryImpl>();
   final _localDataSourceImpl = locator.get<LocationLocalDataSourceImpl>();
+  final _weatherLocalDataSourceImpl = locator.get<WeatherLocalDataSourceImpl>();
 
   HomeCubit()
       : super(
           HomeState(
             title: 'up to date',
-            europeTemperature: true,
+            europeTemperature: false,
             isDataLoaded: false,
             isInformationUpToDate: false,
             temperatureStep: 0.0,
@@ -33,6 +37,7 @@ class HomeCubit extends Cubit<HomeState> {
               hourWeahter: [],
               dayWeather: [],
             ),
+            appDictionary: dictionary.engDictionary,
           ),
         );
 
@@ -56,6 +61,7 @@ class HomeCubit extends Cubit<HomeState> {
             await _localDataSourceImpl.saveLastOnlineSessionTimeToCache(
               DateTime.now().millisecondsSinceEpoch,
             );
+            _weatherLocalDataSourceImpl.saveWeatherToCache(weather);
 
             emit(
               state.copyWith(
@@ -70,29 +76,45 @@ class HomeCubit extends Cubit<HomeState> {
         throw Exception('loading dara error :( $e');
       }
     } else {
-      final location = await _localDataSourceImpl.getLastLocationFromCache();
-      final info = await howOldIsDataInfo();
-      emit(
-        state.copyWith(location: location, title: info),
-      );
+      try {
+        final location = await _localDataSourceImpl.getLastLocationFromCache();
+        final info = await howOldIsDataInfo();
+        final weather =
+            await _weatherLocalDataSourceImpl.getLastWeatherFromCache();
+
+        emit(
+          state.copyWith(
+            location: location,
+            title: info,
+            weather: weather,
+            isDataLoaded: true,
+          ),
+        );
+      } catch (e) {
+        throw Exception(e);
+      }
     }
   }
 
-  void changeTemperatureDegreeType() {
+  void changeLanguage() {
     final double newTemperatureStep;
     final bool newDegreeType;
+    final Map<String, String> appDictionary;
 
     if (state.europeTemperature) {
-      newTemperatureStep = 273.0;
-      newDegreeType = false;
-    } else {
       newTemperatureStep = 0.0;
+      newDegreeType = false;
+      appDictionary = dictionary.engDictionary;
+    } else {
+      newTemperatureStep = 273.0;
       newDegreeType = true;
+      appDictionary = dictionary.ruDictionary;
     }
     emit(
       state.copyWith(
         europeTemperature: newDegreeType,
         temperatureStep: newTemperatureStep,
+        appDictionary: appDictionary,
       ),
     );
   }

@@ -9,6 +9,7 @@ class WeatherApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'My weather',
       theme: ThemeData(
         primarySwatch: Colors.blue,

@@ -5,7 +5,8 @@ class AppColor {
   static Color secondGradientColor = const Color.fromARGB(255, 255, 87, 87);
   static Color homePageBackgroundColor =
       const Color.fromARGB(26, 228, 228, 228);
-  static Color homePageMenuBackgroundColor = Color.fromARGB(120, 255, 255, 255);
+  static Color homePageMenuBackgroundColor =
+      const Color.fromARGB(120, 255, 255, 255);
   static Color homePageTitle = const Color.fromARGB(255, 215, 215, 215);
   static Color homePageSubtitle = const Color.fromARGB(255, 155, 155, 155);
   static Color homePageIcon = const Color.fromARGB(255, 215, 215, 215);

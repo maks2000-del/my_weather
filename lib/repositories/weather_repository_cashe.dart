@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:my_weather/models/info_model.dart';
-import 'package:my_weather/models/lacation_model.dart';
 import 'package:my_weather/models/weather_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -54,7 +53,7 @@ class WeatherLocalDataSourceImpl extends WeatherLocalDataSource {
               )
               .toList(),
         );
-
+        print(currentWeather.iconId);
         return Weather(
           currentWeather: currentWeather,
           hourWeahter: hourWeathe,
